@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
     const result = await cloudinary.uploader.explicit(publicId, {
       type: "upload",
-      eager: [{ fetch_format: "auto", quality: qualityPreset }],
+      eager: [{ format: "pdf", quality: qualityPreset }],
     });
 
     const optimizedBytes = result.eager?.[0]?.bytes ?? originalBytes;
