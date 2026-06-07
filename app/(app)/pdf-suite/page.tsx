@@ -12,9 +12,7 @@ import {
   IconExchange,
   IconUpload,
   IconDownload,
-  IconPlus,
   IconTrash,
-  IconRefresh,
   IconEye,
   IconSettings,
 } from "@tabler/icons-react";
@@ -75,15 +73,21 @@ export default function PDFSuite() {
   const [isProcessingWatermark, setIsProcessingWatermark] = useState(false);
 
   // Tab 4: Optimize
-  const [optimizeFile, setOptimizeFile] = useState<UploadedFile | null>(null);
-  const [optimizedUrl, setOptimizedUrl] = useState<string | null>(null);
-  const [optimizeStats, setOptimizeStats] = useState<{
-    originalBytes: number;
-    optimizedBytes: number;
-    savedBytes: number;
-    savedPercent: string;
-  } | null>(null);
+  const [optimizeFiles, setOptimizeFiles] = useState<UploadedFile[]>([]);
+  const [targetSizeKb, setTargetSizeKb] = useState<number>(200);
   const [isProcessingOptimize, setIsProcessingOptimize] = useState(false);
+  const [optimizeResults, setOptimizeResults] = useState<{
+    [publicId: string]: {
+      optimizedUrl?: string;
+      error?: string;
+      stats?: {
+        originalBytes: number;
+        optimizedBytes: number;
+        savedBytes: number;
+        savedPercent: string;
+      };
+    };
+  }>({});
 
   // Tab 5: Page Manager (Extract/Remove)
   const [managerFile, setManagerFile] = useState<UploadedFile | null>(null);
@@ -104,6 +108,43 @@ export default function PDFSuite() {
   const [imageTag, setImageTag] = useState("");
   const [createdPdfUrl, setCreatedPdfUrl] = useState<string | null>(null);
   const [isCreatingPdfFromImages, setIsCreatingPdfFromImages] = useState(false);
+
+  const uploadSinglePdfFile = async (file: File): Promise<UploadedFile> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const base64Url = reader.result as string;
+        try {
+          const response = await fetch("/api/manage-pdf/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fileUrl: base64Url }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to upload PDF to server");
+          }
+
+          const data = await response.json();
+          if (data.success) {
+            resolve({
+              name: file.name,
+              publicId: data.publicId,
+              url: data.url,
+              pages: data.pages || 1,
+              bytes: data.bytes || file.size,
+            });
+          } else {
+            reject(new Error(data.error || "Unknown upload error"));
+          }
+        } catch (err: unknown) {
+          reject(err instanceof Error ? err : new Error(String(err)));
+        }
+      };
+      reader.onerror = () => reject(new Error("File reading failed"));
+    });
+  };
 
   // Generic File Upload Helper (converts file to base64, uploads to backend)
   const handleFileUpload = async (
@@ -144,9 +185,9 @@ export default function PDFSuite() {
         } else {
           throw new Error(data.error || "Unknown upload error");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("PDF upload error:", err);
-        setErrorMsg(err.message || "Failed to upload file. Make sure it is a valid PDF.");
+        setErrorMsg(err instanceof Error ? err.message : "Failed to upload file. Make sure it is a valid PDF.");
       } finally {
         setIsUploading(false);
       }
@@ -184,9 +225,9 @@ export default function PDFSuite() {
       } else {
         throw new Error("Invalid response format");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Image upload error:", err);
-      setErrorMsg(err.message || "Failed to upload image.");
+      setErrorMsg(err instanceof Error ? err.message : "Failed to upload image.");
     } finally {
       setIsUploading(false);
     }
@@ -214,8 +255,8 @@ export default function PDFSuite() {
       } else {
         throw new Error(data.error || "Merge failed");
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to merge PDF files.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to merge PDF files.");
     } finally {
       setIsProcessingMerge(false);
     }
@@ -241,8 +282,8 @@ export default function PDFSuite() {
       } else {
         throw new Error(data.error || "Rotate failed");
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to rotate PDF.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to rotate PDF.");
     } finally {
       setIsProcessingRotate(false);
     }
@@ -275,8 +316,8 @@ export default function PDFSuite() {
       } else {
         throw new Error(data.error || "Watermark failed");
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to apply watermark.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to apply watermark.");
     } finally {
       setIsProcessingWatermark(false);
     }
@@ -284,28 +325,44 @@ export default function PDFSuite() {
 
   // Run PDF Optimize
   const runOptimize = async () => {
-    if (!optimizeFile) return;
+    if (optimizeFiles.length === 0) return;
     setIsProcessingOptimize(true);
-    setOptimizedUrl(null);
-    setOptimizeStats(null);
     setErrorMsg(null);
 
     try {
-      const response = await fetch("/api/manage-pdf/optimize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ publicId: optimizeFile.publicId }),
-      });
+      const results: typeof optimizeResults = {};
 
-      const data = await response.json();
-      if (data.success) {
-        setOptimizedUrl(data.optimizedUrl);
-        setOptimizeStats(data.stats);
-      } else {
-        throw new Error(data.error || "Optimization failed");
-      }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to optimize PDF.");
+      // Process up to 3 PDFs in parallel
+      await Promise.all(
+        optimizeFiles.map(async (file) => {
+          try {
+            const response = await fetch("/api/manage-pdf/optimize", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                publicId: file.publicId,
+                targetSizeKb: targetSizeKb,
+              }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+              results[file.publicId] = {
+                optimizedUrl: data.optimizedUrl,
+                stats: data.stats,
+              };
+            } else {
+              results[file.publicId] = { error: data.error || "Compression failed" };
+            }
+          } catch (err: unknown) {
+            results[file.publicId] = { error: err instanceof Error ? err.message : "Request failed" };
+          }
+        })
+      );
+
+      setOptimizeResults(results);
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to complete compression queue.");
     } finally {
       setIsProcessingOptimize(false);
     }
@@ -362,8 +419,8 @@ export default function PDFSuite() {
           throw new Error(data.error || "Removal failed");
         }
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || `Failed to perform page operation.`);
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to perform page operation.");
     } finally {
       setIsProcessingPages(false);
     }
@@ -393,8 +450,8 @@ export default function PDFSuite() {
       } else {
         throw new Error(data.error || "Conversion failed");
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to convert page to image.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to convert page to image.");
     } finally {
       setIsProcessingConvert(false);
     }
@@ -421,8 +478,8 @@ export default function PDFSuite() {
       } else {
         throw new Error(data.error || "Failed to compile PDF");
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to create PDF from images.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to create PDF from images.");
     } finally {
       setIsCreatingPdfFromImages(false);
     }
@@ -873,7 +930,7 @@ export default function PDFSuite() {
                             <div>
                               <p className="text-xs font-bold text-success-content">Watermark Applied!</p>
                               <p className="text-[10px] text-success-content/70">
-                                Watermark text "{watermarkText}" has been permanently stamped onto pages.
+                                Watermark text &quot;{watermarkText}&quot; has been permanently stamped onto pages.
                               </p>
                             </div>
                             <button
@@ -890,99 +947,180 @@ export default function PDFSuite() {
 
                     {/* TAB 4: OPTIMIZE */}
                     {activeTab === "optimize" && (
-                      <div className="space-y-6">
-                        <div className="flex flex-col gap-2">
-                          <span className="text-xs font-semibold text-base-content/60">Upload PDF to Compress</span>
-                          {!optimizeFile ? (
-                            <label className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-base-content/10 rounded-xl cursor-pointer hover:border-primary/50 transition-colors bg-base-100/40">
-                              <IconUpload className="w-8 h-8 opacity-40 mb-2 text-primary" />
-                              <span className="text-xs font-bold">Choose a PDF file</span>
-                              <input
-                                type="file"
-                                accept="application/pdf"
-                                onChange={(e) => handleFileUpload(e, setOptimizeFile)}
-                                className="hidden"
-                              />
-                            </label>
-                          ) : (
-                            <div className="flex items-center justify-between p-4 rounded-xl bg-base-100 border border-base-content/5 shadow-sm">
-                              <div className="flex items-center gap-3">
-                                <IconFileText className="w-8 h-8 text-primary" />
-                                <div>
-                                  <p className="text-xs font-bold truncate max-w-sm">{optimizeFile.name}</p>
-                                  <p className="text-[10px] text-base-content/40">
-                                    Pages: {optimizeFile.pages} • Size: {(optimizeFile.bytes / 1024).toFixed(1)} KB
-                                  </p>
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => {
-                                  setOptimizeFile(null);
-                                  setOptimizedUrl(null);
-                                  setOptimizeStats(null);
-                                }}
-                                className="btn btn-ghost btn-xs text-error"
-                              >
-                                Replace File
-                              </button>
-                            </div>
-                          )}
+                      <div className="space-y-8 text-center max-w-2xl mx-auto py-4">
+                        {/* Title */}
+                        <h2 className="text-2xl md:text-3xl font-extrabold text-base-content tracking-tight">
+                          Compress PDF to {targetSizeKb}kb
+                        </h2>
+
+                        {/* Dashed Dropzone */}
+                        <div className="relative">
+                          <label className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-indigo-500/40 rounded-3xl cursor-pointer hover:border-indigo-500/70 transition-all bg-base-100/40 min-h-[200px]">
+                            <span className="text-sm font-semibold text-base-content/70 mb-4">
+                            Select Or Drag &amp; Drop PDF&apos;s Here
+                            </span>
+                            <span className="btn bg-teal-700 hover:bg-teal-800 text-white font-bold px-6 py-2 border-none rounded-lg shadow-md flex items-center gap-1.5 cursor-pointer">
+                              Select PDF
+                            </span>
+                            <input
+                              type="file"
+                              accept="application/pdf"
+                              multiple
+                              onChange={async (e) => {
+                                const files = Array.from(e.target.files || []);
+                                if (files.length + optimizeFiles.length > 3) {
+                                  setErrorMsg("You can compress up to 3 PDFs at once.");
+                                  return;
+                                }
+                                setIsUploading(true);
+                                setErrorMsg(null);
+                                try {
+                                  const uploaded = await Promise.all(
+                                    files.map(file => uploadSinglePdfFile(file))
+                                  );
+                                  setOptimizeFiles((prev) => [...prev, ...uploaded]);
+                                } catch (err: unknown) {
+                                  setErrorMsg(err instanceof Error ? err.message : "Upload failed");
+                                } finally {
+                                  setIsUploading(false);
+                                }
+                              }}
+                              className="hidden"
+                            />
+                          </label>
                         </div>
 
-                        {optimizeFile && (
-                          <button
-                            onClick={runOptimize}
-                            disabled={isProcessingOptimize}
-                            className="btn btn-primary w-full text-primary-content border-none shadow-md rounded-xl py-3"
-                          >
-                            {isProcessingOptimize ? (
-                              <span className="flex items-center gap-2">
-                                <span className="loading loading-spinner loading-xs"></span>
-                                Optimizing document bytes...
-                              </span>
-                            ) : (
-                              "Compress PDF Size"
-                            )}
-                          </button>
+                        {/* Selected Files Queue */}
+                        {optimizeFiles.length > 0 && (
+                          <div className="text-left space-y-3">
+                            <span className="text-xs font-bold uppercase tracking-wider text-base-content/50">
+                              Selected PDF Files ({optimizeFiles.length}/3)
+                            </span>
+                            <div className="space-y-2">
+                              {optimizeFiles.map((file, idx) => {
+                                const result = optimizeResults[file.publicId];
+                                return (
+                                  <div
+                                    key={file.publicId}
+                                    className="flex items-center justify-between p-3.5 rounded-xl bg-base-100 border border-base-content/5 shadow-sm"
+                                  >
+                                    <div className="flex items-center gap-3 min-w-0">
+                                      <IconFileText className="w-5 h-5 text-primary shrink-0" />
+                                      <div className="min-w-0">
+                                        <p className="text-xs font-bold truncate max-w-xs">{file.name}</p>
+                                        <p className="text-[10px] text-base-content/40">
+                                          Size: {(file.bytes / 1024).toFixed(1)} KB
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-3 shrink-0">
+                                      {result?.stats && (
+                                        <span className="text-[10px] bg-success/10 text-success px-2 py-0.5 rounded-md font-semibold">
+                                          - {result.stats.savedPercent}
+                                        </span>
+                                      )}
+                                      {result?.error && (
+                                        <span className="text-[10px] bg-error/10 text-error px-2 py-0.5 rounded-md font-semibold">
+                                          Failed
+                                        </span>
+                                      )}
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setOptimizeFiles((prev) => prev.filter((_, i) => i !== idx));
+                                          setOptimizeResults((prev) => {
+                                            const copy = { ...prev };
+                                            delete copy[file.publicId];
+                                            return copy;
+                                          });
+                                        }}
+                                        className="btn btn-ghost btn-circle btn-xs text-base-content/40 hover:text-error hover:bg-error/10"
+                                      >
+                                        <IconTrash className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
                         )}
 
-                        {optimizeStats && optimizedUrl && (
-                          <div className="space-y-6">
-                            <div className="grid grid-cols-3 gap-4">
-                              <div className="p-4 rounded-xl bg-base-100 border border-base-content/5 shadow-inner text-center">
-                                <span className="text-[9px] uppercase tracking-wider font-bold block text-base-content/40">Original</span>
-                                <span className="text-lg font-bold text-base-content">
-                                  {(optimizeStats.originalBytes / 1024).toFixed(1)} KB
-                                </span>
-                              </div>
-                              <div className="p-4 rounded-xl bg-base-100 border border-base-content/5 shadow-inner text-center">
-                                <span className="text-[9px] uppercase tracking-wider font-bold block text-base-content/40">Optimized</span>
-                                <span className="text-lg font-bold text-success">
-                                  {(optimizeStats.optimizedBytes / 1024).toFixed(1)} KB
-                                </span>
-                              </div>
-                              <div className="p-4 rounded-xl bg-base-100 border border-base-content/5 shadow-inner text-center">
-                                <span className="text-[9px] uppercase tracking-wider font-bold block text-base-content/40">Efficiency</span>
-                                <span className="text-lg font-bold text-accent">
-                                  {optimizeStats.savedPercent}
-                                </span>
-                              </div>
+                        {/* Controls: Target Size Input & Compress Button */}
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 border-t border-base-content/5">
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-semibold text-base-content/75">PDF Size:</span>
+                            <div className="flex items-center border border-indigo-500/50 rounded-lg overflow-hidden bg-base-100 shadow-sm">
+                              <input
+                                type="number"
+                                value={targetSizeKb}
+                                onChange={(e) => setTargetSizeKb(parseInt(e.target.value) || 200)}
+                                className="w-20 px-3 py-1.5 text-center text-sm font-bold text-base-content focus:outline-none bg-transparent"
+                              />
+                              <span className="bg-indigo-600/10 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 text-sm font-semibold border-l border-indigo-500/50">
+                                Kb
+                              </span>
                             </div>
+                          </div>
 
-                            <div className="p-4 rounded-xl bg-success/15 border border-success/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                              <div>
-                                <p className="text-xs font-bold text-success-content">Compression Completed!</p>
-                                <p className="text-[10px] text-success-content/70">
-                                  Saved {((optimizeStats.savedBytes) / 1024).toFixed(1)} KB. Ready for download.
-                                </p>
-                              </div>
-                              <button
-                                onClick={() => handleDownload(optimizedUrl!, "optimized.pdf")}
-                                className="btn btn-success btn-sm text-white flex items-center gap-1.5 rounded-lg shadow-sm cursor-pointer"
-                              >
-                                <IconDownload className="w-4 h-4" />
-                                Download Optimized PDF
-                              </button>
+                          <button
+                            onClick={runOptimize}
+                            disabled={optimizeFiles.length === 0 || isProcessingOptimize}
+                            className="btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg px-6 py-2 border-none shadow-md cursor-pointer flex items-center gap-1.5"
+                          >
+                            {isProcessingOptimize ? (
+                              <>
+                                <span className="loading loading-spinner loading-xs"></span>
+                                Compressing...
+                              </>
+                            ) : (
+                              "Compress"
+                            )}
+                          </button>
+                        </div>
+
+                        {/* Note */}
+                        <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                          Note:- You Can Compress 3 PDFs At Once
+                        </p>
+
+                        {/* Compression Results Grid */}
+                        {Object.keys(optimizeResults).length > 0 && (
+                          <div className="space-y-4 pt-6 border-t border-base-content/5 text-left">
+                            <span className="text-xs font-bold uppercase tracking-wider text-base-content/50">
+                              Compression Results
+                            </span>
+                            <div className="grid gap-4 sm:grid-cols-1">
+                              {optimizeFiles.map((file) => {
+                                const res = optimizeResults[file.publicId];
+                                if (!res) return null;
+                                return (
+                                  <div
+                                    key={file.publicId}
+                                    className="p-4 rounded-xl border border-base-content/10 bg-base-100 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm"
+                                  >
+                                    <div className="space-y-1">
+                                      <p className="text-xs font-bold truncate max-w-sm">{file.name}</p>
+                                      {res.stats ? (
+                                        <p className="text-[10px] text-base-content/60">
+                                          Original: {(res.stats.originalBytes / 1024).toFixed(1)} KB • Optimized: {(res.stats.optimizedBytes / 1024).toFixed(1)} KB • Saved: {res.stats.savedPercent}
+                                        </p>
+                                      ) : (
+                                        <p className="text-[10px] text-error font-medium">{res.error || "Failed"}</p>
+                                      )}
+                                    </div>
+                                    {res.optimizedUrl && (
+                                      <button
+                                        onClick={() => handleDownload(res.optimizedUrl!, `${file.name.replace(/\.[^/.]+$/, "")}_compressed.pdf`)}
+                                        className="btn btn-success btn-sm text-white flex items-center gap-1.5 rounded-lg shadow-sm cursor-pointer self-start md:self-auto"
+                                      >
+                                        <IconDownload className="w-4 h-4" />
+                                        Download PDF
+                                      </button>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         )}
@@ -1192,7 +1330,7 @@ export default function PDFSuite() {
                                     <label className="text-[10px] font-semibold uppercase text-base-content/50">Format</label>
                                     <select
                                       value={convertFormat}
-                                      onChange={(e) => setConvertFormat(e.target.value as any)}
+                                      onChange={(e) => setConvertFormat(e.target.value as "jpg" | "png" | "webp")}
                                       className="select select-bordered select-sm rounded-xl focus:border-primary focus:outline-none"
                                     >
                                       <option value="jpg">JPG</option>
