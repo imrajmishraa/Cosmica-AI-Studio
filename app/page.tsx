@@ -44,8 +44,8 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-base-300 text-base-content relative overflow-x-hidden transition-colors duration-300 flex flex-col justify-between">
       {/* Dynamic Background Ambient Glows */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl -translate-y-1/2 pointer-events-none"></div>
-      <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-0 left-1/4 w-125 h-125 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 pointer-events-none"></div>
+      <div className="absolute top-1/3 right-1/4 w-100 h-100 bg-secondary/5 rounded-full blur-3xl pointer-events-none"></div>
 
       <Header />
 

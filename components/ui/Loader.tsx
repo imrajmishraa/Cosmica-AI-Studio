@@ -2,7 +2,7 @@
 
 export default function Loader() {
   return (
-    <div className="flex items-center justify-center mt-40 mb-50">
+    <div className="flex content-center items-center justify-center m-60">
       <div className="loading-content">
         <div className="liquid"></div>
         <div className="liquid"></div>
