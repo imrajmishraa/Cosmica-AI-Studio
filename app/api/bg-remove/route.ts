@@ -12,14 +12,8 @@ export async function POST(request: Request) {
   try {
     const result = await cloudinary.uploader.explicit(publicId, {
       type: "upload",
-      eager: [
-        {
-          effect: "background_removal", // Cloudinary AI bg removal
-          format: "auto", // must be PNG to preserve transparency
-        },
-      ],
-      eager_async: true, // bg removal takes time
-      ...(webhook && { eager_notification_url: webhook }), // notify when ready
+      background_removal: "cloudinary_ai",
+      ...(webhook && { notification_url: webhook }),
     });
 
     return Response.json({
@@ -31,7 +25,7 @@ export async function POST(request: Request) {
         : "Background removal started. Poll /api/bg-remove/status to check progress.",
       // URL is predictable even before processing finishes
       resultUrl: cloudinary.url(publicId, {
-        effect: "background_removal",
+        effect: "e_background_removal",
         format: "png",
       }),
     });
