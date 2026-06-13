@@ -5,6 +5,8 @@ const isProtectedRoute = createRouteMatcher([
   "/home(.*)",
   "/social-share(.*)",
   "/video-share(.*)",
+  "/ai-image(.*)",
+  "/pdf-suite(.*)",
   "/api/video-upload(.*)",
   "/api/image-upload(.*)",
 ]);
