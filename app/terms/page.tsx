@@ -1,9 +1,13 @@
-"use client";
-
 import React from "react";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import { IconFileText, IconAlertCircle, IconChecklist, IconShield } from "@tabler/icons-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Service | Cosmica AI Studio",
+  description: "Read the agreements, acceptable use limits, and legal guidelines for the Cosmica workspace.",
+};
 
 export default function TermsOfServicePage() {
   return (
