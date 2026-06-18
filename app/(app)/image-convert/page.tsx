@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { IconExchange, IconSettings, IconAlertTriangle } from "@tabler/icons-react";
+import {
+  IconExchange,
+  IconSettings,
+  IconAlertTriangle,
+} from "@tabler/icons-react";
 import FileUploader from "./components/FileUploader";
 import FormatSelector from "./components/FormatSelector";
 import ConversionPreview from "./components/ConversionPreview";
@@ -62,22 +66,28 @@ export default function ImageConvertPage() {
     const endpointName = getConvertEndpoint(uploadedFile.format);
 
     try {
-      const response = await fetch(`/api/manage-image/convert/${endpointName}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `/api/manage-image/convert/${endpointName}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            publicId: uploadedFile.publicId,
+            targetFormat: targetFormat,
+          }),
         },
-        body: JSON.stringify({
-          publicId: uploadedFile.publicId,
-          targetFormat: targetFormat,
-        }),
-      });
+      );
 
       const data = await response.json();
 
       if (response.ok && data.success) {
         setConvertedUrl(data.transformedUrl);
-        toast(`Converted successfully to ${targetFormat.toUpperCase()}!`, "success");
+        toast(
+          `Converted successfully to ${targetFormat.toUpperCase()}!`,
+          "success",
+        );
       } else {
         throw new Error(data.error || "Format conversion failed");
       }
@@ -104,8 +114,9 @@ export default function ImageConvertPage() {
             Image Format Converter Studio
           </h1>
           <p className="text-xs md:text-sm text-base-content/70 max-w-2xl leading-relaxed">
-            Convert image formats instantly using high-performance Cloudinary transformations.
-            Upload your source file, choose the desired output layout/format, and download the result.
+            Convert image formats instantly using high-performance Cloudinary
+            transformations. Upload your source file, choose the desired output
+            layout/format, and download the result.
           </p>
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { IconDownload, IconPhoto, IconArrowsSplit, IconRefresh, IconArrowRight } from "@tabler/icons-react";
+import { IconDownload, IconPhoto, IconRefresh } from "@tabler/icons-react";
 import { toast } from "@/app/store/Toast";
 import { cn } from "@/app/lib/utils";
 
@@ -64,14 +64,17 @@ export default function ConversionPreview({
 
   if (!uploadedFile) {
     return (
-      <div className="flex-1 bg-slate-950/60 rounded-2xl border border-base-content/10 min-h-[400px] flex items-center justify-center p-6 text-center select-none bg-[radial-gradient(#ffffff04_1px,transparent_1px)] bg-[size:16px_16px]">
+      <div className="flex-1 bg-white rounded-2xl border border-[#e5e7eb] min-h-100 flex items-center justify-center p-6 text-center select-none bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-size-[16px_16px]">
         <div className="max-w-xs space-y-2.5">
-          <div className="w-12 h-12 rounded-full bg-base-100 border border-base-content/10 flex items-center justify-center mx-auto opacity-55">
-            <IconPhoto className="w-5 h-5 text-base-content/70" />
+          <div className="w-12 h-12 rounded-full bg-[#f8f9fa] border border-[#e5e7eb] flex items-center justify-center mx-auto opacity-75">
+            <IconPhoto className="w-5 h-5 text-[#9ca3af]" />
           </div>
-          <p className="text-xs font-bold text-base-content/75">Workspace Visualizer Idle</p>
-          <p className="text-[10px] text-base-content/40 leading-normal">
-            Upload an image to start format conversion operations and preview output changes.
+          <p className="text-xs font-bold text-[#111827]">
+            Workspace Visualizer Idle
+          </p>
+          <p className="text-[10px] text-[#4b5563] leading-normal font-semibold">
+            Upload an image to start format conversion operations and preview
+            output changes.
           </p>
         </div>
       </div>
@@ -79,26 +82,45 @@ export default function ConversionPreview({
   }
 
   return (
-    <div className="flex flex-col bg-slate-900 border border-base-content/10 rounded-2xl overflow-hidden shadow-xl min-h-[480px]">
+    <div className="flex flex-col bg-white border border-[#e5e7eb] rounded-2xl overflow-hidden shadow-sm min-h-120">
       {/* Visualizer Toolbar */}
-      <div className="h-12 border-b border-white/5 bg-slate-950/80 backdrop-blur-md px-4 flex items-center justify-between z-10 shrink-0 text-white/70 text-[11px] font-bold">
+      <div className="h-12 border-b border-[#e5e7eb] bg-white px-4 flex items-center justify-between z-10 shrink-0 text-[#111827] text-[11px] font-bold">
         <div className="flex items-center gap-1.5 font-semibold">
-          <span className={cn("w-2 h-2 rounded-full", isProcessing ? "bg-amber-500 animate-pulse" : convertedUrl ? "bg-emerald-500 animate-pulse" : "bg-indigo-500 animate-pulse")}></span>
+          <span
+            className={cn(
+              "w-2 h-2 rounded-full",
+              isProcessing
+                ? "bg-amber-500 animate-pulse"
+                : convertedUrl
+                  ? "bg-emerald-500 animate-pulse"
+                  : "bg-[#e63946] animate-pulse",
+            )}
+          ></span>
           <span>Visualizer Canvas</span>
         </div>
 
         {/* View Mode Switcher */}
         {convertedUrl && (
-          <div className="join bg-white/5 border border-white/10 rounded-lg p-0.5">
+          <div className="join bg-[#f8f9fa] border border-[#e5e7eb] rounded-lg p-0.5">
             <button
               onClick={() => setViewMode("side-by-side")}
-              className={cn("join-item btn btn-xs border-none text-[9px] uppercase px-2 font-bold cursor-pointer rounded-md", viewMode === "side-by-side" ? "bg-white/15 text-white" : "bg-transparent text-white/40")}
+              className={cn(
+                "join-item btn btn-xs border-none text-[9px] uppercase px-2.5 font-bold cursor-pointer rounded-md",
+                viewMode === "side-by-side"
+                  ? "bg-[#e63946] text-white"
+                  : "bg-transparent text-[#4b5563]",
+              )}
             >
               Side-by-Side
             </button>
             <button
               onClick={() => setViewMode("result-only")}
-              className={cn("join-item btn btn-xs border-none text-[9px] uppercase px-2 font-bold cursor-pointer rounded-md", viewMode === "result-only" ? "bg-white/15 text-white" : "bg-transparent text-white/40")}
+              className={cn(
+                "join-item btn btn-xs border-none text-[9px] uppercase px-2.5 font-bold cursor-pointer rounded-md",
+                viewMode === "result-only"
+                  ? "bg-[#e63946] text-white"
+                  : "bg-transparent text-[#4b5563]",
+              )}
             >
               Result Only
             </button>
@@ -106,14 +128,18 @@ export default function ConversionPreview({
         )}
       </div>
 
-      {/* Main Canvas Viewport */}
-      <div className="flex-1 bg-[radial-gradient(#ffffff06_1px,transparent_1px)] bg-[size:16px_16px] bg-slate-950 flex items-center justify-center p-6 overflow-hidden relative select-none min-h-[300px]">
+      {/* Main Canvas Viewport (remains dark for high-contrast image editing) */}
+      <div className="flex-1 bg-[radial-gradient(#ffffff06_1px,transparent_1px)] bg-size-[16px_16px] bg-slate-950 flex items-center justify-center p-6 overflow-hidden relative select-none min-h-75">
         {isProcessing ? (
           <div className="flex flex-col items-center gap-4 text-center">
-            <div className="w-12 h-12 rounded-full border-3 border-t-indigo-500 border-white/10 animate-spin"></div>
+            <div className="w-12 h-12 rounded-full border-3 border-t-[#e63946] border-white/10 animate-spin"></div>
             <div className="space-y-0.5">
-              <p className="font-bold text-white text-xs">Transforming Image Format...</p>
-              <p className="text-[9px] text-white/50">Eager rendering pipeline executing on Cloudinary Server</p>
+              <p className="font-bold text-white text-xs">
+                Transforming Image Format...
+              </p>
+              <p className="text-[9px] text-white/50">
+                Eager rendering pipeline executing on Cloudinary Server
+              </p>
             </div>
           </div>
         ) : convertedUrl ? (
@@ -124,31 +150,47 @@ export default function ConversionPreview({
                 <div className="flex flex-col items-center gap-2">
                   <div className="text-[9px] text-white/50 font-bold uppercase tracking-wider flex items-center gap-1.5">
                     <span>Source Canvas</span>
-                    <span className="bg-white/10 text-white/70 px-1 py-0.2 rounded font-mono text-[8px]">{uploadedFile.format.toUpperCase()}</span>
+                    <span className="bg-white/10 text-white/70 px-1 py-0.2 rounded font-mono text-[8px]">
+                      {uploadedFile.format.toUpperCase()}
+                    </span>
                   </div>
-                  <div className="w-full aspect-video md:aspect-[4/3] rounded-xl overflow-hidden border border-white/5 bg-slate-900/60 relative flex items-center justify-center group shadow-md">
-                    <img src={uploadedFile.url} alt="Original source" className="w-full h-full object-contain pointer-events-none" />
+                  <div className="w-full aspect-video md:aspect-4/3 rounded-xl overflow-hidden border border-white/5 bg-slate-900/60 relative flex items-center justify-center group shadow-md">
+                    <img
+                      src={uploadedFile.url}
+                      alt="Original source"
+                      className="w-full h-full object-contain pointer-events-none"
+                    />
                   </div>
                 </div>
 
                 {/* Converted */}
                 <div className="flex flex-col items-center gap-2">
-                  <div className="text-[9px] text-primary font-bold uppercase tracking-wider flex items-center gap-1.5">
+                  <div className="text-[9px] text-[#e63946] font-bold uppercase tracking-wider flex items-center gap-1.5">
                     <span>Converted Canvas</span>
-                    <span className="bg-primary/20 text-primary px-1 py-0.2 rounded font-mono text-[8px]">{targetFormat.toUpperCase()}</span>
+                    <span className="bg-[#e63946]/20 text-[#e63946] px-1 py-0.2 rounded font-mono text-[8px]">
+                      {targetFormat.toUpperCase()}
+                    </span>
                   </div>
-                  <div className="w-full aspect-video md:aspect-[4/3] rounded-xl overflow-hidden border border-primary/25 bg-slate-900/60 relative flex items-center justify-center group shadow-md">
-                    <img src={convertedUrl} alt="Converted result" className="w-full h-full object-contain pointer-events-none" />
+                  <div className="w-full aspect-video md:aspect-4/3 rounded-xl overflow-hidden border border-[#e63946]/25 bg-slate-900/60 relative flex items-center justify-center group shadow-md">
+                    <img
+                      src={convertedUrl}
+                      alt="Converted result"
+                      className="w-full h-full object-contain pointer-events-none"
+                    />
                   </div>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-2 w-full max-w-xl">
-                <span className="text-[9px] text-primary font-bold uppercase tracking-wider bg-primary/15 text-primary px-2 py-0.5 rounded-full">
+                <span className="text-[9px] text-[#e63946] font-bold uppercase tracking-wider bg-[#e63946]/15  px-2 py-0.5 rounded-full">
                   Resulting {targetFormat.toUpperCase()}
                 </span>
-                <div className="w-full aspect-video md:aspect-[4/3] rounded-xl overflow-hidden border border-white/5 bg-slate-900/60 relative flex items-center justify-center shadow-lg">
-                  <img src={convertedUrl} alt="Converted output" className="w-full h-full object-contain pointer-events-none" />
+                <div className="w-full aspect-video md:aspect-4/3 rounded-xl overflow-hidden border border-white/5 bg-slate-900/60 relative flex items-center justify-center shadow-lg">
+                  <img
+                    src={convertedUrl}
+                    alt="Converted output"
+                    className="w-full h-full object-contain pointer-events-none"
+                  />
                 </div>
               </div>
             )}
@@ -159,9 +201,12 @@ export default function ConversionPreview({
               <IconPhoto className="w-5 h-5" />
             </div>
             <div className="space-y-1 max-w-xs">
-              <p className="font-extrabold text-white text-xs">Ready for Conversion</p>
+              <p className="font-extrabold text-white text-xs">
+                Ready for Conversion
+              </p>
               <p className="text-[9px] text-white/50 leading-normal">
-                Choose your desired target format in the options panel, then click convert to execute format transformations.
+                Choose your desired target format in the options panel, then
+                click convert to execute format transformations.
               </p>
             </div>
           </div>
@@ -169,12 +214,12 @@ export default function ConversionPreview({
       </div>
 
       {/* Action Footer */}
-      <div className="p-4 border-t border-white/5 bg-slate-950/40 shrink-0 flex flex-col sm:flex-row gap-2">
+      <div className="p-4 border-t border-[#e5e7eb] bg-[#f8f9fa] shrink-0 flex flex-col sm:flex-row gap-2">
         {convertedUrl ? (
           <button
             onClick={handleDownload}
             disabled={isProcessing}
-            className="flex-1 btn btn-success text-white flex items-center justify-center gap-1.5 rounded-xl shadow-md cursor-pointer font-extrabold text-xs"
+            className="flex-1 btn bg-emerald-600 hover:bg-emerald-700 text-white border-none flex items-center justify-center gap-1.5 rounded-xl shadow-sm cursor-pointer font-extrabold text-xs"
           >
             <IconDownload className="w-4 h-4" />
             Download Converted Image
@@ -183,10 +228,10 @@ export default function ConversionPreview({
           <button
             onClick={onConvert}
             disabled={isProcessing || !targetFormat}
-            className="flex-1 btn btn-primary text-primary-content flex items-center justify-center gap-1.5 rounded-xl shadow-md cursor-pointer font-extrabold text-xs border-none"
+            className="flex-1 btn bg-[#e63946] hover:bg-[#c82333] text-white border-none flex items-center justify-center gap-1.5 rounded-xl shadow-sm cursor-pointer font-extrabold text-xs"
           >
             {isProcessing ? (
-              <span className="loading loading-spinner loading-xs"></span>
+              <span className="loading loading-spinner loading-xs text-white"></span>
             ) : (
               <>
                 <IconRefresh className="w-4 h-4 animate-spin-slow" />
