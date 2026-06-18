@@ -72,12 +72,6 @@ export default function Sidebar() {
       icon: <IconExchange className="w-5 h-5" />,
       desc: "Format converter pipeline",
     },
-    {
-      name: "Document PDF Suite",
-      href: "/pdf-suite",
-      icon: <IconFileText className="w-5 h-5" />,
-      desc: "Visual PDF toolkit",
-    },
   ];
 
   const sidebarContent = (
@@ -115,7 +109,9 @@ export default function Sidebar() {
           onClick={() => setIsPaletteOpen(true)}
           className={cn(
             "flex items-center gap-2 border border-base-content/10 bg-base-100/50 hover:bg-base-300/80 hover:border-base-content/20 text-base-content/60 hover:text-base-content rounded-xl text-left cursor-pointer transition-all duration-200",
-            isCollapsed ? "w-10 h-10 justify-center p-0" : "w-full px-3 py-2 text-xs"
+            isCollapsed
+              ? "w-10 h-10 justify-center p-0"
+              : "w-full px-3 py-2 text-xs",
           )}
           title="Search assets & commands (⌘K)"
         >
@@ -143,7 +139,7 @@ export default function Sidebar() {
                 "group flex items-center gap-3.5 px-3 py-3 rounded-xl text-sm font-semibold transition-all duration-200 relative",
                 isActive
                   ? "bg-primary text-primary-content shadow-lg shadow-primary/10"
-                  : "text-base-content/70 hover:bg-base-300 hover:text-base-content"
+                  : "text-base-content/70 hover:bg-base-300 hover:text-base-content",
               )}
             >
               <div className="shrink-0">{item.icon}</div>
@@ -153,7 +149,9 @@ export default function Sidebar() {
                   <span
                     className={cn(
                       "text-[9px] font-normal leading-none mt-0.5 truncate",
-                      isActive ? "text-primary-content/60" : "text-base-content/40 group-hover:text-base-content/65"
+                      isActive
+                        ? "text-primary-content/60"
+                        : "text-base-content/40 group-hover:text-base-content/65",
                     )}
                   >
                     {item.desc}
@@ -173,8 +171,17 @@ export default function Sidebar() {
       {/* Sidebar Footer / Controls */}
       <div className="p-3 border-t border-base-content/10 bg-base-150/10 space-y-3 shrink-0">
         {/* Theme Controller */}
-        <div className={cn("flex items-center justify-between", isCollapsed && "justify-center")}>
-          {!isCollapsed && <span className="text-xs font-semibold text-base-content/50 uppercase tracking-wider pl-1.5">Theme</span>}
+        <div
+          className={cn(
+            "flex items-center justify-between",
+            isCollapsed && "justify-center",
+          )}
+        >
+          {!isCollapsed && (
+            <span className="text-xs font-semibold text-base-content/50 uppercase tracking-wider pl-1.5">
+              Theme
+            </span>
+          )}
           <ThemeToggle />
         </div>
 
@@ -183,7 +190,7 @@ export default function Sidebar() {
           <div
             className={cn(
               "flex items-center justify-between p-2 rounded-xl bg-base-100/50 border border-base-content/5",
-              isCollapsed && "flex-col gap-3 p-1.5 bg-transparent border-none"
+              isCollapsed && "flex-col gap-3 p-1.5 bg-transparent border-none",
             )}
           >
             <div className="flex items-center gap-2.5 min-w-0">
@@ -219,7 +226,9 @@ export default function Sidebar() {
         )}
       </div>
 
-      {isPaletteOpen && <CommandPalette onClose={() => setIsPaletteOpen(false)} />}
+      {isPaletteOpen && (
+        <CommandPalette onClose={() => setIsPaletteOpen(false)} />
+      )}
     </div>
   );
 
@@ -279,7 +288,7 @@ export default function Sidebar() {
       <aside
         className={cn(
           "hidden md:block h-screen sticky top-0 shrink-0 transition-all duration-300 z-30",
-          isCollapsed ? "w-20" : "w-64"
+          isCollapsed ? "w-20" : "w-64",
         )}
       >
         {sidebarContent}
