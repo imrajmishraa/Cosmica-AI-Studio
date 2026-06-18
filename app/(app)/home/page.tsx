@@ -155,7 +155,13 @@ export default function Home() {
   // Compute aggregated dashboard statistics
   const stats = useMemo(() => {
     if (videos.length === 0) {
-      return { totalCount: 0, originalTotal: 0, compressedTotal: 0, savedTotal: 0, avgRatio: 0 };
+      return {
+        totalCount: 0,
+        originalTotal: 0,
+        compressedTotal: 0,
+        savedTotal: 0,
+        avgRatio: 0,
+      };
     }
 
     let origSum = 0;
@@ -188,17 +194,22 @@ export default function Home() {
       result = result.filter(
         (v) =>
           v.title.toLowerCase().includes(query) ||
-          v.description?.toLowerCase().includes(query)
+          v.description?.toLowerCase().includes(query),
       );
     }
 
     // Sort by criteria
     if (sortBy === "date") {
-      result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      result.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
     } else if (sortBy === "savings") {
       result.sort((a, b) => {
-        const savingsA = parseFloat(a.originalSize) - parseFloat(a.compressedSize);
-        const savingsB = parseFloat(b.originalSize) - parseFloat(b.compressedSize);
+        const savingsA =
+          parseFloat(a.originalSize) - parseFloat(a.compressedSize);
+        const savingsB =
+          parseFloat(b.originalSize) - parseFloat(b.compressedSize);
         return savingsB - savingsA;
       });
     }
@@ -227,7 +238,9 @@ export default function Home() {
             Welcome back, {user?.firstName || "Creator"}!
           </h1>
           <p className="text-xs md:text-sm text-base-content/70 max-w-xl leading-relaxed">
-            Monitor digital asset volume, run live AI transformations, adjust social presets, compress heavy video payloads, and manage PDF suites.
+            Monitor digital asset volume, run live AI transformations, adjust
+            social presets, compress heavy video payloads, and manage PDF
+            suites.
           </p>
         </div>
 
@@ -245,9 +258,15 @@ export default function Home() {
         {/* Total Videos */}
         <div className="card bg-base-200 border border-base-content/10 rounded-2xl p-5 flex flex-row items-center justify-between shadow-xl">
           <div className="space-y-1.5">
-            <span className="text-[10px] text-base-content/50 uppercase font-black tracking-wider block">Total Vault Videos</span>
-            <span className="text-3xl font-black leading-none">{stats.totalCount}</span>
-            <span className="text-[10px] text-base-content/40 block">Stored in active Postgres</span>
+            <span className="text-[10px] text-base-content/50 uppercase font-black tracking-wider block">
+              Total Vault Videos
+            </span>
+            <span className="text-3xl font-black leading-none">
+              {stats.totalCount}
+            </span>
+            <span className="text-[10px] text-base-content/40 block">
+              Stored in active Postgres
+            </span>
           </div>
           <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-inner">
             <IconVideo className="w-6 h-6" />
@@ -257,11 +276,17 @@ export default function Home() {
         {/* Space Saved */}
         <div className="card bg-base-200 border border-base-content/10 rounded-2xl p-5 flex flex-row items-center justify-between shadow-xl">
           <div className="space-y-1.5">
-            <span className="text-[10px] text-base-content/50 uppercase font-black tracking-wider block">Storage Saved</span>
-            <span className="text-3xl font-black leading-none">
-              {stats.savedTotal > 0 ? filesize(stats.savedTotal, { round: 1 }) : "0.0 MB"}
+            <span className="text-[10px] text-base-content/50 uppercase font-black tracking-wider block">
+              Storage Saved
             </span>
-            <span className="text-[10px] text-base-content/40 block">From visual transcodes</span>
+            <span className="text-3xl font-black leading-none">
+              {stats.savedTotal > 0
+                ? filesize(stats.savedTotal, { round: 1 })
+                : "0.0 MB"}
+            </span>
+            <span className="text-[10px] text-base-content/40 block">
+              From visual transcodes
+            </span>
           </div>
           <div className="w-12 h-12 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary shadow-inner">
             <IconDatabase className="w-6 h-6" />
@@ -271,13 +296,22 @@ export default function Home() {
         {/* Avg Compression Ratio */}
         <div className="card bg-base-200 border border-base-content/10 rounded-2xl p-5 flex flex-row items-center justify-between shadow-xl">
           <div className="space-y-1.5">
-            <span className="text-[10px] text-base-content/50 uppercase font-black tracking-wider block">Average Savings Ratio</span>
-            <span className="text-3xl font-black text-accent leading-none">{stats.avgRatio}%</span>
-            <span className="text-[10px] text-base-content/40 block">Bandwidth conservation rate</span>
+            <span className="text-[10px] text-base-content/50 uppercase font-black tracking-wider block">
+              Average Savings Ratio
+            </span>
+            <span className="text-3xl font-black text-accent leading-none">
+              {stats.avgRatio}%
+            </span>
+            <span className="text-[10px] text-base-content/40 block">
+              Bandwidth conservation rate
+            </span>
           </div>
           <div className="relative w-12 h-12 flex items-center justify-center">
             {/* SVG Progress Circle */}
-            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+            <svg
+              className="w-full h-full transform -rotate-90"
+              viewBox="0 0 36 36"
+            >
               <path
                 className="text-base-content/10"
                 strokeWidth="3.5"
@@ -295,18 +329,26 @@ export default function Home() {
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
             </svg>
-            <span className="absolute text-[10px] font-black text-accent">{stats.avgRatio}%</span>
+            <span className="absolute text-[10px] font-black text-accent">
+              {stats.avgRatio}%
+            </span>
           </div>
         </div>
 
         {/* Total Vault Usage */}
         <div className="card bg-base-200 border border-base-content/10 rounded-2xl p-5 flex flex-row items-center justify-between shadow-xl">
           <div className="space-y-1.5">
-            <span className="text-[10px] text-base-content/50 uppercase font-black tracking-wider block">Vault Usage</span>
-            <span className="text-3xl font-black leading-none">
-              {stats.compressedTotal > 0 ? filesize(stats.compressedTotal, { round: 1 }) : "0.0 MB"}
+            <span className="text-[10px] text-base-content/50 uppercase font-black tracking-wider block">
+              Vault Usage
             </span>
-            <span className="text-[10px] text-base-content/40 block">Out of 5GB default cap</span>
+            <span className="text-3xl font-black leading-none">
+              {stats.compressedTotal > 0
+                ? filesize(stats.compressedTotal, { round: 1 })
+                : "0.0 MB"}
+            </span>
+            <span className="text-[10px] text-base-content/40 block">
+              Out of 5GB default cap
+            </span>
           </div>
           <div className="w-12 h-12 rounded-xl bg-info/10 border border-info/20 flex items-center justify-center text-info shadow-inner">
             <IconPlus className="w-6 h-6 rotate-45 text-info" />
@@ -316,9 +358,14 @@ export default function Home() {
 
       {/* Grid of Workspaces */}
       <div className="space-y-4">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-base-content/50 pl-1">Workspace Hub</h3>
+        <h3 className="text-sm font-bold uppercase tracking-wider text-base-content/50 pl-1">
+          Workspace Hub
+        </h3>
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          <Link href="/social-share" className="group card bg-base-200 border border-base-content/10 hover:border-pink-500/35 p-5 rounded-2xl flex flex-col justify-between shadow-md transition-all duration-300">
+          <Link
+            href="/social-share"
+            className="group card bg-base-200 border border-base-content/10 hover:border-pink-500/35 p-5 rounded-2xl flex flex-col justify-between shadow-md transition-all duration-300"
+          >
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
                 <IconPhoto className="w-5 h-5" />
@@ -329,13 +376,17 @@ export default function Home() {
                   <IconArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </h4>
                 <p className="text-[11px] text-base-content/60 leading-normal mt-1">
-                  Crop and transform graphics into optimal presets using face-aware gravity detection.
+                  Crop and transform graphics into optimal presets using
+                  face-aware gravity detection.
                 </p>
               </div>
             </div>
           </Link>
 
-          <Link href="/ai-image" className="group card bg-base-200 border border-base-content/10 hover:border-emerald-500/35 p-5 rounded-2xl flex flex-col justify-between shadow-md transition-all duration-300">
+          <Link
+            href="/ai-image"
+            className="group card bg-base-200 border border-base-content/10 hover:border-emerald-500/35 p-5 rounded-2xl flex flex-col justify-between shadow-md transition-all duration-300"
+          >
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                 <IconSparkles className="w-5 h-5" />
@@ -346,13 +397,17 @@ export default function Home() {
                   <IconArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </h4>
                 <p className="text-[11px] text-base-content/60 leading-normal mt-1">
-                  Erase object clusters, upscale to 4K, remove backgrounds, and compress formats dynamically.
+                  Erase object clusters, upscale to 4K, remove backgrounds, and
+                  compress formats dynamically.
                 </p>
               </div>
             </div>
           </Link>
 
-          <Link href="/video-share" className="group card bg-base-200 border border-base-content/10 hover:border-indigo-500/35 p-5 rounded-2xl flex flex-col justify-between shadow-md transition-all duration-300">
+          <Link
+            href="/video-share"
+            className="group card bg-base-200 border border-base-content/10 hover:border-indigo-500/35 p-5 rounded-2xl flex flex-col justify-between shadow-md transition-all duration-300"
+          >
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
                 <IconVideo className="w-5 h-5" />
@@ -363,13 +418,17 @@ export default function Home() {
                   <IconArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </h4>
                 <p className="text-[11px] text-base-content/60 leading-normal mt-1">
-                  Resize, convert, and compress large media formats to under 70MB web envelopes.
+                  Resize, convert, and compress large media formats to under
+                  70MB web envelopes.
                 </p>
               </div>
             </div>
           </Link>
 
-          <Link href="/pdf-suite" className="group card bg-base-200 border border-base-content/10 hover:border-purple-500/35 p-5 rounded-2xl flex flex-col justify-between shadow-md transition-all duration-300">
+          <Link
+            href="/pdf-suite"
+            className="group card bg-base-200 border border-base-content/10 hover:border-purple-500/35 p-5 rounded-2xl flex flex-col justify-between shadow-md transition-all duration-300"
+          >
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
                 <IconFileText className="w-5 h-5" />
@@ -380,7 +439,8 @@ export default function Home() {
                   <IconArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </h4>
                 <p className="text-[11px] text-base-content/60 leading-normal mt-1">
-                  watermark pages, rotate sheets, extract sections, and compile multiple documents visually.
+                  watermark pages, rotate sheets, extract sections, and compile
+                  multiple documents visually.
                 </p>
               </div>
             </div>
@@ -392,8 +452,12 @@ export default function Home() {
       <div className="space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-base-content/10 pb-3">
           <div className="space-y-0.5">
-            <h3 className="text-lg font-black tracking-tight">Media Library Vault</h3>
-            <p className="text-xs text-base-content/50">Search, filter, download, and catalog compressed video assets.</p>
+            <h3 className="text-lg font-black tracking-tight">
+              Media Library Vault
+            </h3>
+            <p className="text-xs text-base-content/50">
+              Search, filter, download, and catalog compressed video assets.
+            </p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -403,7 +467,9 @@ export default function Home() {
                 onClick={() => setViewMode("grid")}
                 className={cn(
                   "join-item btn btn-xs px-2.5 rounded-lg border-none text-[10px] cursor-pointer",
-                  viewMode === "grid" ? "bg-primary text-primary-content shadow-sm" : "bg-transparent text-base-content/50 hover:text-base-content"
+                  viewMode === "grid"
+                    ? "bg-primary text-primary-content shadow-sm"
+                    : "bg-transparent text-base-content/50 hover:text-base-content",
                 )}
                 title="Grid view"
               >
@@ -413,7 +479,9 @@ export default function Home() {
                 onClick={() => setViewMode("list")}
                 className={cn(
                   "join-item btn btn-xs px-2.5 rounded-lg border-none text-[10px] cursor-pointer",
-                  viewMode === "list" ? "bg-primary text-primary-content shadow-sm" : "bg-transparent text-base-content/50 hover:text-base-content"
+                  viewMode === "list"
+                    ? "bg-primary text-primary-content shadow-sm"
+                    : "bg-transparent text-base-content/50 hover:text-base-content",
                 )}
                 title="List view"
               >
@@ -441,13 +509,17 @@ export default function Home() {
 
           {/* Sort Controller */}
           <div className="md:col-span-3 flex items-center gap-2">
-            <span className="text-[10px] text-base-content/50 font-bold uppercase shrink-0">Sort By</span>
+            <span className="text-[10px] text-base-content/50 font-bold uppercase shrink-0">
+              Sort By
+            </span>
             <div className="join border border-base-content/10 rounded-xl p-0.5 bg-base-200 w-full justify-between">
               <button
                 onClick={() => setSortBy("date")}
                 className={cn(
                   "join-item btn btn-xs flex-1 rounded-lg border-none text-[10px] font-semibold transition-all cursor-pointer",
-                  sortBy === "date" ? "bg-primary text-primary-content shadow-md" : "bg-transparent text-base-content/50 hover:text-base-content"
+                  sortBy === "date"
+                    ? "bg-primary text-primary-content shadow-md"
+                    : "bg-transparent text-base-content/50 hover:text-base-content",
                 )}
               >
                 Date Created
@@ -456,7 +528,9 @@ export default function Home() {
                 onClick={() => setSortBy("savings")}
                 className={cn(
                   "join-item btn btn-xs flex-1 rounded-lg border-none text-[10px] font-semibold transition-all cursor-pointer",
-                  sortBy === "savings" ? "bg-primary text-primary-content shadow-md" : "bg-transparent text-base-content/50 hover:text-base-content"
+                  sortBy === "savings"
+                    ? "bg-primary text-primary-content shadow-md"
+                    : "bg-transparent text-base-content/50 hover:text-base-content",
                 )}
               >
                 Storage Saved
@@ -472,8 +546,11 @@ export default function Home() {
               onDrop={handleDrop}
               className={cn(
                 "border-2 border-dashed rounded-2xl flex items-center justify-center px-4 py-2 transition-all text-xs h-10 select-none",
-                isDragOver ? "border-primary bg-primary/5 text-primary scale-[1.02]" : "border-base-content/10 bg-base-200/50 text-base-content/50",
-                isUploading && "border-solid border-primary bg-primary/5 text-primary"
+                isDragOver
+                  ? "border-primary bg-primary/5 text-primary scale-[1.02]"
+                  : "border-base-content/10 bg-base-200/50 text-base-content/50",
+                isUploading &&
+                  "border-solid border-primary bg-primary/5 text-primary",
               )}
             >
               {isUploading ? (
@@ -484,7 +561,11 @@ export default function Home() {
                       <span>Uploading/Compressing...</span>
                       <span>{uploadProgress}%</span>
                     </div>
-                    <progress className="progress progress-primary w-full h-1 bg-base-300" value={uploadProgress} max="100"></progress>
+                    <progress
+                      className="progress progress-primary w-full h-1 bg-base-300"
+                      value={uploadProgress}
+                      max="100"
+                    ></progress>
                   </div>
                 </div>
               ) : (
@@ -506,7 +587,9 @@ export default function Home() {
               </div>
               <div className="space-y-1">
                 <h3 className="font-bold text-base-content text-sm">
-                  {searchQuery.trim() ? "No matching files" : "Your video library vault is empty"}
+                  {searchQuery.trim()
+                    ? "No matching files"
+                    : "Your video library vault is empty"}
                 </h3>
                 <p className="text-xs text-base-content/50 leading-normal">
                   {searchQuery.trim()
@@ -522,12 +605,14 @@ export default function Home() {
             {filteredVideos.map((video) => (
               <VideoCard
                 key={video.id}
-                video={{
-                  ...video,
-                  duration: video.duration || 0,
-                  originalSize: String(video.originalSize),
-                  compressedSize: String(video.compressedSize),
-                } as any}
+                video={
+                  {
+                    ...video,
+                    duration: video.duration || 0,
+                    originalSize: String(video.originalSize),
+                    compressedSize: String(video.compressedSize),
+                  } as any
+                }
                 onDownload={handleDownload}
               />
             ))}
@@ -549,18 +634,28 @@ export default function Home() {
               <tbody className="divide-y divide-base-content/5">
                 {filteredVideos.map((video) => {
                   const savings = Math.round(
-                    (1 - Number(video.compressedSize) / Number(video.originalSize)) * 100
+                    (1 -
+                      Number(video.compressedSize) /
+                        Number(video.originalSize)) *
+                      100,
                   );
                   const minutes = Math.floor(video.duration / 60);
                   const seconds = Math.round(video.duration % 60);
                   const durationStr = `${minutes}:${seconds.toString().padStart(2, "0")}`;
 
                   return (
-                    <tr key={video.id} className="hover:bg-base-100/50 transition-colors">
+                    <tr
+                      key={video.id}
+                      className="hover:bg-base-100/50 transition-colors"
+                    >
                       <td className="py-3 px-4 font-bold max-w-xs truncate">
                         <div>
-                          <p className="truncate text-base-content font-bold">{video.title}</p>
-                          <p className="text-[10px] text-base-content/40 truncate mt-0.5">{video.description}</p>
+                          <p className="truncate text-base-content font-bold">
+                            {video.title}
+                          </p>
+                          <p className="text-[10px] text-base-content/40 truncate mt-0.5">
+                            {video.description}
+                          </p>
                         </div>
                       </td>
                       <td className="py-3 px-4 font-mono text-base-content/70">
@@ -569,7 +664,9 @@ export default function Home() {
                       <td className="py-3 px-4 font-mono text-primary font-bold">
                         {filesize(Number(video.compressedSize), { round: 1 })}
                       </td>
-                      <td className="py-3 px-4 font-mono text-base-content/60">{durationStr}</td>
+                      <td className="py-3 px-4 font-mono text-base-content/60">
+                        {durationStr}
+                      </td>
                       <td className="py-3 px-4">
                         <span className="bg-accent/10 border border-accent/20 text-accent font-bold px-2 py-0.5 rounded-lg font-mono">
                           {savings}%
@@ -580,7 +677,7 @@ export default function Home() {
                           onClick={() =>
                             handleDownload(
                               `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dxojgqsrh"}/video/upload/${video.publicId}`,
-                              video.title
+                              video.title,
                             )
                           }
                           className="btn btn-outline btn-xs rounded-lg border-base-content/10 text-base-content hover:bg-primary hover:text-primary-content hover:border-transparent cursor-pointer font-bold"
