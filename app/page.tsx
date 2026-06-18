@@ -80,7 +80,9 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-sm sm:text-lg text-base-content/75 leading-relaxed max-w-2xl mx-auto"
           >
-            A high-performance SaaS engine for creators and developers. Automatically crop social assets, optimize heavy video payloads, process PDF structures, and apply advanced AI filters.
+            A high-performance SaaS engine for creators and developers.
+            Automatically crop social assets, optimize heavy video payloads,
+            process PDF structures, and apply advanced AI filters.
           </motion.p>
 
           <motion.div
@@ -108,7 +110,9 @@ export default function LandingPage() {
         {/* Feature Workspace Map Grid */}
         <div id="workspaces" className="space-y-8 scroll-mt-24">
           <div className="text-center space-y-2 max-w-lg mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">Integrated Core Workspaces</h2>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
+              Integrated Core Workspaces
+            </h2>
             <p className="text-xs sm:text-sm text-base-content/60 leading-normal">
               Explore the five advanced media suites engineered into Cosmica.
             </p>
@@ -125,17 +129,22 @@ export default function LandingPage() {
                   <IconPhoto className="w-6 h-6" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-extrabold text-base text-base-content">Social Share Studio</h4>
+                  <h4 className="font-extrabold text-base text-base-content">
+                    Social Share Studio
+                  </h4>
                   <p className="text-xs text-base-content/60 leading-relaxed">
-                    Upload images and crop them into exact social dimensions (Instagram, X, Facebook) using content-aware gravity focus.
+                    Upload images and crop them into exact social dimensions
+                    (Instagram, X, Facebook) using content-aware gravity focus.
                   </p>
                 </div>
                 <ul className="space-y-1.5 text-[10px] text-base-content/50 font-semibold">
                   <li className="flex items-center gap-1.5">
-                    <IconChevronRight className="w-3 h-3 text-pink-400" /> Auto Face Gravity
+                    <IconChevronRight className="w-3 h-3 text-pink-400" /> Auto
+                    Face Gravity
                   </li>
                   <li className="flex items-center gap-1.5">
-                    <IconChevronRight className="w-3 h-3 text-pink-400" /> Presets list (1:1, 16:9, 3:1)
+                    <IconChevronRight className="w-3 h-3 text-pink-400" />{" "}
+                    Presets list (1:1, 16:9, 3:1)
                   </li>
                 </ul>
               </div>
@@ -159,17 +168,22 @@ export default function LandingPage() {
                   <IconSparkles className="w-6 h-6" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-extrabold text-base text-base-content">AI Image Workspace</h4>
+                  <h4 className="font-extrabold text-base text-base-content">
+                    Image Workspace
+                  </h4>
                   <p className="text-xs text-base-content/60 leading-relaxed">
-                    Strip background layers, erase objects with natural prompts, upscale pixels to 4K, and optimize compression settings.
+                    Strip background layers, erase objects with natural prompts,
+                    upscale pixels to 4K, and optimize compression settings.
                   </p>
                 </div>
                 <ul className="space-y-1.5 text-[10px] text-base-content/50 font-semibold">
                   <li className="flex items-center gap-1.5">
-                    <IconChevronRight className="w-3 h-3 text-emerald-400" /> AI Background Eraser
+                    <IconChevronRight className="w-3 h-3 text-emerald-400" /> AI
+                    Background Eraser
                   </li>
                   <li className="flex items-center gap-1.5">
-                    <IconChevronRight className="w-3 h-3 text-emerald-400" /> 4K Super-Resolution
+                    <IconChevronRight className="w-3 h-3 text-emerald-400" /> 4K
+                    Super-Resolution
                   </li>
                 </ul>
               </div>
@@ -193,17 +207,22 @@ export default function LandingPage() {
                   <IconVideo className="w-6 h-6" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-extrabold text-base text-base-content">Video Compressor</h4>
+                  <h4 className="font-extrabold text-base text-base-content">
+                    Video Compressor
+                  </h4>
                   <p className="text-xs text-base-content/60 leading-relaxed">
-                    Compress and transcode video payloads up to 70MB. Shrink file sizes by up to 80% with codec preservation.
+                    Compress and transcode video payloads up to 70MB. Shrink
+                    file sizes by up to 80% with codec preservation.
                   </p>
                 </div>
                 <ul className="space-y-1.5 text-[10px] text-base-content/50 font-semibold">
                   <li className="flex items-center gap-1.5">
-                    <IconChevronRight className="w-3 h-3 text-indigo-400" /> Balanced quality codecs
+                    <IconChevronRight className="w-3 h-3 text-indigo-400" />{" "}
+                    Balanced quality codecs
                   </li>
                   <li className="flex items-center gap-1.5">
-                    <IconChevronRight className="w-3 h-3 text-indigo-400" /> Live compression statistics
+                    <IconChevronRight className="w-3 h-3 text-indigo-400" />{" "}
+                    Live compression statistics
                   </li>
                 </ul>
               </div>
@@ -227,17 +246,22 @@ export default function LandingPage() {
                   <IconFileText className="w-6 h-6" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-extrabold text-base text-base-content">Document PDF Suite</h4>
+                  <h4 className="font-extrabold text-base text-base-content">
+                    Document PDF Suite
+                  </h4>
                   <p className="text-xs text-base-content/60 leading-relaxed">
-                    Merge files, rotate pages, remove/extract sections, and watermark documents visually with Cloudinary rendering.
+                    Merge files, rotate pages, remove/extract sections, and
+                    watermark documents visually with Cloudinary rendering.
                   </p>
                 </div>
                 <ul className="space-y-1.5 text-[10px] text-base-content/50 font-semibold">
                   <li className="flex items-center gap-1.5">
-                    <IconChevronRight className="w-3 h-3 text-purple-400" /> Visual Page Editor Grid
+                    <IconChevronRight className="w-3 h-3 text-purple-400" />{" "}
+                    Visual Page Editor Grid
                   </li>
                   <li className="flex items-center gap-1.5">
-                    <IconChevronRight className="w-3 h-3 text-purple-400" /> Custom Watermark overlays
+                    <IconChevronRight className="w-3 h-3 text-purple-400" />{" "}
+                    Custom Watermark overlays
                   </li>
                 </ul>
               </div>
@@ -263,10 +287,18 @@ export default function LandingPage() {
               Enterprise Route Security & Infrastructure
             </h3>
             <p className="text-sm text-base-content/75 leading-relaxed">
-              Cosmica is backed by Clerk NextJS token routing, ensuring strict protection of your media workspaces and API requests. The core database operates via Neon Serverless Postgres, providing blazing-fast query speeds and high durability.
+              Cosmica is backed by Clerk NextJS token routing, ensuring strict
+              protection of your media workspaces and API requests. The core
+              database operates via Neon Serverless Postgres, providing
+              blazing-fast query speeds and high durability.
             </p>
             <div className="flex flex-wrap gap-2.5">
-              {["Clerk Security", "Serverless Neon", "Prisma pg", "Cloudinary CDN"].map((tag) => (
+              {[
+                "Clerk Security",
+                "Serverless Neon",
+                "Prisma pg",
+                "Cloudinary CDN",
+              ].map((tag) => (
                 <span
                   key={tag}
                   className="text-[10px] font-bold uppercase tracking-wider bg-base-300/80 border border-base-content/10 text-base-content/75 rounded-lg px-2.5 py-1"
