@@ -6,9 +6,11 @@ const isProtectedRoute = createRouteMatcher([
   "/social-share(.*)",
   "/video-share(.*)",
   "/ai-image(.*)",
-  "/pdf-suite(.*)",
+  "/image-convert(.*)",
+  "/video-convert(.*)",
   "/api/video-upload(.*)",
   "/api/image-upload(.*)",
+  "/api/convert(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
