@@ -1,9 +1,13 @@
-"use client";
-
 import React from "react";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import { IconShieldLock, IconEye, IconLock, IconFolderOpen } from "@tabler/icons-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | Cosmica AI Studio",
+  description: "Learn how Cosmica securely manages user credentials, data logs, and media assets in our active workspace.",
+};
 
 export default function PrivacyPolicyPage() {
   return (
