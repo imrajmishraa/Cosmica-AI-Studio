@@ -127,7 +127,27 @@ export default function Page() {
       IsLoading(false);
     }
 
+
+    if (
+      signUp.status === "missing_requirements" &&
+      signUp.unverifiedFields.includes("email_address")
+    ) {
+      return (
+        <form onSubmit={handleVerify}>
+          <h1>Verify your email</h1>
+          <input
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="Enter verification code"
+          />
+          <button type="submit">Verify</button>
+        </form>
+      );
+    }
+
   return
-  (<></>)
+  (<>
+  <div> sign up form</div>
+  </>)
 }
 }
