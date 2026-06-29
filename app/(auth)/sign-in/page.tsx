@@ -1,6 +1,6 @@
 "use client";
 
-import { useSignIn } from "@clerk/nextjs";
+import { useAuth, useSignIn, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -23,6 +23,7 @@ const LabelInputContainer = ({
 
 export default function SignInPage() {
   const { errors, signIn, fetchStatus } = useSignIn();
+  const { isLoaded  } = useAuth();
   const router = useRouter();
 
   const [emailAddress, setEmailAddress] = useState("");
