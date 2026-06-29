@@ -69,7 +69,7 @@ export default function Page() {
     setError(null);
 
     try {
-      await signUp.create({
+      await signUp.password({
         emailAddress: email,
         password: password,
       });
