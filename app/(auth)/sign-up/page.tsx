@@ -146,8 +146,25 @@ export default function Page() {
     }
 
   return
-  (<>
-  <div> sign up form</div>
-  </>)
+  <>
+    <div>
+      <form onSubmit={submit}>
+        <h1>Sign up</h1>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+        />
+        <button type="submit">Sign up</button>
+      </form>
+    </div>
+  </>;
 }
 }
