@@ -58,7 +58,24 @@ export default function SignInPage() {
       // 2. Check if the sign-in is complete
       if (signIn.status === "complete") {
         // Set the active session and redirect to the home page
-        await setActive({ session: signIn.createdSessionId });
+        await signIn.finalize({
+          // Redirect the user to the home page after signing up
+          navigate: ({ session, decorateUrl }) => {
+            // Handle session tasks
+            // See https://clerk.com/docs/guides/development/custom-flows/authentication/session-tasks
+            if (session?.currentTask) {
+              console.log(session?.currentTask);
+              return;
+            }
+
+            const url = decorateUrl("/");
+            if (url.startsWith("http")) {
+              window.location.href = url;
+            } else {
+              router.push(url);
+            }
+          },
+        });
         router.push("/");
       } else {
         // This triggers if the user has Two-Factor Authentication (MFA) enabled.
