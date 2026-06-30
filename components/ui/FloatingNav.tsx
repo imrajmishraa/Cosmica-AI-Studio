@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { SignOutButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
-import { cn } from "../../app/lib/utils";
+import { cn } from "@/lib/utils";
 import {
   motion,
   AnimatePresence,
