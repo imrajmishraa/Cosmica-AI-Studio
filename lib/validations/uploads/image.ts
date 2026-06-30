@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4 MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export const imageSchema = z
   .instanceof(File, {
@@ -22,3 +22,5 @@ export const imageSchema = z
       message: "Only JPEG, PNG, WebP, and GIF images are allowed.",
     },
   );
+
+  
