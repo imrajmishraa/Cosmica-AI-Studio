@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { IconSun, IconMoon } from "@tabler/icons-react";
-import { cn } from "@/app/lib/utils";
+import { cn } from "@/lib/utils";
 
 export default function ThemeToggle() {
   const [activeTheme, setActiveTheme] = useState("dark");
