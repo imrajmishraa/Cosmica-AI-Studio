@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { IconUpload, IconCloudUpload, IconX, IconPhoto } from "@tabler/icons-react";
 import { toast } from "@/app/store/Toast";
 import { filesize } from "filesize";
-import { cn } from "@/app/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface UploadedFile {
   publicId: string;
@@ -118,7 +118,7 @@ export default function FileUploader({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            "flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-300 bg-base-100/40 relative min-h-[180px]",
+            "flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-300 bg-base-100/40 relative min-h-45",
             isDragOver
               ? "border-primary bg-primary/5 scale-[0.99] shadow-inner"
               : "border-base-content/15 hover:border-primary/50 hover:bg-base-100/60"
@@ -167,7 +167,7 @@ export default function FileUploader({
               <IconPhoto className="w-5 h-5 absolute opacity-30 text-white" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-base-content truncate max-w-[180px] sm:max-w-[300px]">
+              <p className="text-xs font-bold text-base-content truncate max-w-45 sm:max-w-75">
                 {uploadedFile.name}
               </p>
               <div className="flex items-center gap-2 mt-1">
